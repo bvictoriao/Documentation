@@ -1,0 +1,699 @@
+openapi: 3.0.3
+info:
+  title: Restaurant Booking API
+  version: 1.0.0
+
+servers:
+  - url: https://booking.restaurants.ru/api/v1
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: user
+    description: Методы для работы с профайлами пользователей
+  - name: restaurants
+    description: Методы для работы с ресторанами
+  - name: bookings
+    description: Бронирования
+  - name: admin
+    description: Администрирование ресторана
+
+paths:
+  /user/header:
+    get:
+      tags:
+        - user
+      summary: Получить данные для аватарки личного кабинета
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeaderResponse'
+        '401':
+          description: Не авторизован
+
+  /restaurants:
+    get:
+      tags:
+        - restaurants
+      summary: Получить список ресторанов с фильтрацией
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: cuisine
+          in: query
+          style: form
+          explode: true
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: rating
+          in: query
+          required: false
+          schema:
+            type: number
+            minimum: 0
+            maximum: 5
+        - name: priceMin
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: priceMax
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: kidsMenu
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: metro
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: district
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RestaurantPreview'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+        '401':
+          description: Не авторизован
+
+  /restaurants/{id}:
+    get:
+      tags:
+        - restaurants
+      summary: Получить детальную информацию о ресторане
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: Ресторан не найден
+
+  /restaurants/{id}/tables:
+    get:
+      tags:
+        - restaurants
+      summary: Получить список столиков ресторана на выбранные дату/время
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: time
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: guests
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+        '401':
+          description: Не авторизован
+
+  /bookings:
+    post:
+      tags:
+        - bookings
+      summary: Создать новую бронь
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
+      responses:
+        '201':
+          description: Бронь создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+
+  /user/bookings:
+    get:
+      tags:
+        - bookings
+      summary: Получить активные брони пользователя
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [active, archive]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserBooking'
+        '401':
+          description: Не авторизован
+
+  /bookings/{id}:
+    delete:
+      tags:
+        - bookings
+      summary: Отменить бронь
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Бронь отменена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          description: Не авторизован
+        '404':
+          description: Бронь не найдена
+
+  /admin/restaurant/profile:
+    get:
+      tags:
+        - admin
+      summary: Получить профиль ресторана для администратора
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantAdmin'
+        '403':
+          description: Доступ запрещён
+    put:
+      tags:
+        - admin
+      summary: Обновить профиль ресторана
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantUpdate'
+      responses:
+        '200':
+          description: Профиль обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantAdmin'
+        '400':
+          description: Ошибка валидации
+        '403':
+          description: Доступ запрещён
+
+  /admin/restaurant/bookings:
+    get:
+      tags:
+        - admin
+      summary: Получить список броней ресторана (админ)
+      parameters:
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: time
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: tableId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pending, confirmed, completed, cancelled]
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BookingAdmin'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+        '403':
+          description: Доступ запрещён
+
+  /admin/restaurant/tables:
+    get:
+      tags:
+        - admin
+      summary: Получить все столики ресторана для редактирования
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TableAdmin'
+        '403':
+          description: Доступ запрещён
+    put:
+      tags:
+        - admin
+      summary: Обновить схему зала 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TableAdmin'
+      responses:
+        '200':
+          description: Схема обновлена
+        '400':
+          description: Неверные данные
+        '403':
+          description: Доступ запрещён
+
+ 
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HeaderResponse:
+      type: object
+      properties:
+        avatarUrl:
+          type: string
+          format: uri
+          description: Ссылка на аватарку пользователя
+
+    RestaurantPreview:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        cuisine:
+          type: array
+          items:
+            type: string
+        averageCheck:
+          type: integer
+        rating:
+          type: number
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    Restaurant:
+      type: object
+      required:
+        - id
+        - name
+        - cuisine
+        - address
+        - workingHours
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        rating:
+          type: number
+        cuisine:
+          type: array
+          items:
+            type: string
+        averageCheck:
+          type: integer
+        address:
+          type: object
+          properties:
+            city:
+              type: string
+            street:
+              type: string
+            building:
+              type: string
+        workingHours:
+          type: object
+          properties:
+            open:
+              type: string
+            close:
+              type: string
+            days:
+              type: string
+        description:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    RestaurantAdmin:
+      allOf:
+        - $ref: '#/components/schemas/Restaurant'
+        - type: object
+          properties:
+            logo:
+              type: string
+              format: uri
+            contactPhone:
+              type: string
+            contactEmail:
+              type: string
+            internalNotes:
+              type: string
+            settings:
+              type: object
+              properties:
+                autoConfirmBookings:
+                  type: boolean
+
+    RestaurantUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        cuisine:
+          type: array
+          items:
+            type: string
+        averageCheck:
+          type: integer
+        address:
+          type: object
+          properties:
+            city:
+              type: string
+            street:
+              type: string
+            building:
+              type: string
+        workingHours:
+          type: object
+          properties:
+            open:
+              type: string
+            close:
+              type: string
+            days:
+              type: string
+        description:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+        logo:
+          type: string
+          format: uri
+        contactPhone:
+          type: string
+        contactEmail:
+          type: string
+        internalNotes:
+          type: string
+        settings:
+          type: object
+          properties:
+            autoConfirmBookings:
+              type: boolean
+
+    Table:
+      type: object
+      properties:
+        id:
+          type: integer
+        number:
+          type: string
+        seats:
+          type: integer
+        isAvailable:
+          type: boolean
+        position:
+          type: object
+          properties:
+            x:
+              type: integer
+            y:
+              type: integer
+
+    TableAdmin:
+      allOf:
+        - $ref: '#/components/schemas/Table'
+        - type: object
+          properties:
+            isActive:
+              type: boolean
+
+    CreateBookingRequest:
+      type: object
+      required:
+        - restaurantId
+        - tableId
+        - date
+        - time
+        - guests
+      properties:
+        restaurantId:
+          type: integer
+        tableId:
+          type: integer
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        guests:
+          type: integer
+          minimum: 1
+        comment:
+          type: string
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurant:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        table:
+          type: object
+          properties:
+            id:
+              type: integer
+            number:
+              type: string
+            seats:
+              type: integer
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        guests:
+          type: integer
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    BookingAdmin:
+      allOf:
+        - $ref: '#/components/schemas/Booking'
+        - type: object
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                phone:
+                  type: string
+    BookingResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+        restaurantName:
+          type: string
+        tableNumber:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        guests:
+          type: integer
+    UserBooking:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurant:
+          type: object
+          properties:
+            name:
+              type: string
+        table:
+          type: object
+          properties:
+            number:
+              type: string
+        guests:
+          type: integer
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+    
+    
