@@ -18,9 +18,30 @@ const sidebars = {
   tutorialSidebar: [
     {
       type: 'category',
-      label: 'API',
-      items: ['api/rest-api', 'api/error-codes'],
+      label: 'Концепция',
+      items: ['concept/business-requirements', 'concept/boundaries'],
     },
+    {
+      type: 'category',
+      label: 'Платформизация курсового проекта',
+      items: ['concept/platformization'],
+    },
+    {
+      type: 'category',
+      label: 'База данных',
+      items: ['concept/database'],
+    },
+    {
+      type: 'category',
+      label: 'BPMN',
+      items: ['concept/bpmn'],
+    },
+    {
+      type: 'category',
+      label: 'Макет интерфейса',
+      items: ['concept/ui-mockup'],
+    },
+
     {
       type: 'category',
       label: 'ERD',
@@ -30,6 +51,16 @@ const sidebars = {
       type: 'category',
       label: 'Сценарии',
       items: ['scenarios/use-case', 'scenarios/sequence-diagram'],
+    },
+    {
+      type: 'category',
+      label: 'Функциональные требования',
+      items: ['functional-requirements/use-cases'],
+    },
+    {
+      type: 'category',
+      label: 'Нефункциональные требования',
+      items: ['non-functional-requirements/nfr'],
     },
   ],
 };
