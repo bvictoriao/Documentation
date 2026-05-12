@@ -52,6 +52,11 @@ const sidebars = {
       label: 'Макет интерфейса',
       items: ['concept/ui-mockup'],
     },
+   {
+      type: 'category',
+      label: 'API',
+      items: ['api/rest-api'],
+    },
    
     {
       type: 'category',
