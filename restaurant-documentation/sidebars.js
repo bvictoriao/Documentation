@@ -23,36 +23,10 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Платформизация курсового проекта',
-      items: ['concept/platformization'],
+      label: 'Сбор требования',
+      items: ['concept/requirements-gathering'], 
     },
-    {
-      type: 'category',
-      label: 'База данных',
-      items: ['concept/database'],
-    },
-    {
-      type: 'category',
-      label: 'BPMN',
-      items: ['concept/bpmn'],
-    },
-    {
-      type: 'category',
-      label: 'Макет интерфейса',
-      items: ['concept/ui-mockup'],
-    },
-
-    {
-      type: 'category',
-      label: 'ERD',
-      items: ['db/erd'],
-    },
-    {
-      type: 'category',
-      label: 'Сценарии',
-      items: ['scenarios/use-case', 'scenarios/sequence-diagram'],
-    },
-    {
+   {
       type: 'category',
       label: 'Функциональные требования',
       items: ['functional-requirements/use-cases'],
@@ -62,6 +36,46 @@ const sidebars = {
       label: 'Нефункциональные требования',
       items: ['non-functional-requirements/nfr'],
     },
+  
+   {
+      type: 'category',
+      label: 'BPMN',
+      items: ['concept/bpmn'],
+    },
+   {
+      type: 'category',
+      label: 'Сценарии',
+      items: ['scenarios/use-case', 'scenarios/sequence-diagram'],
+    },
+   {
+      type: 'category',
+      label: 'Макет интерфейса',
+      items: ['concept/ui-mockup'],
+    },
+   
+    {
+      type: 'category',
+      label: 'База данных',
+      items: ['concept/database'],
+    },
+
+    {
+      type: 'category',
+      label: 'ERD',
+      items: ['db/erd'],
+    },
+   {
+      type: 'category',
+      label: 'Асинхронное взаимодействие',
+      items: ['concept/async-interaction'],
+    },
+    {
+      type: 'category',
+      label: 'Платформизация курсового проекта',
+      items: ['concept/platformization'],
+    },
+    
+    
   ],
 };
 
