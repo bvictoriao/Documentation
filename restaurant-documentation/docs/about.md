@@ -27,7 +27,7 @@
 | [Use Case диаграмма](scenarios/use-case.md) | Диаграмма показывает роли пользователей и ключевые сценарии в сервисе бронирования столиков. |
 | [Sequence диаграмма](scenarios/sequence-diagram.md) | Диаграмма отражает процесс бронирования столиков. |
 | [Макет интерфейса](concept/ui-mockup.md) | Ссылка на интерактивный макет в Unidraw, скриншоты экранов и описание источников данных. |
-| [API](api/error-codes.md) | Cпецификация OpenAPI. |
+| [API](api/rest-api.md) | Cпецификация OpenAPI. |
 | [База данных](concept/database.md) | Сущности (`User`, `Restaurant`, `Table`, `Booking`, `RestaurantRegistration`), атрибуты, объёмы данных, паттерны доступа, выбор реляционной СУБД + Object Storage для фото. |
 | [ERD](db/erd.md) | ERD диаграмма, описание сущностей. |
 | [Асинхронное взаимодействие](concept/async-interaction.md) | Обоснование выбора RabbitMQ для отправки нотификаций (email/SMS) после успешного бронирования. |
