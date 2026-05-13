@@ -18,6 +18,11 @@ const sidebars = {
   tutorialSidebar: [
     {
       type: 'category',
+      label: 'О проекте',
+      items: ['about'], 
+    },
+    {
+      type: 'category',
       label: 'Концепция',
       items: ['concept/business-requirements', 'concept/boundaries'],
     },
